@@ -25,7 +25,9 @@ namespace ComputerProbe.BusinessLayer.Services
         void CreateDriveData(int probeDataId, DriveData data);
         void CreateGPUData(int probeDataId, GPUData data);
         void CreateOSData(int probeDataId, OSData data);
+        void CreateNetworkData(int probeDataId, NetworkData data);
         void CreatePrinterData(int probeDataId, PrinterData data);
+        void CreateError(int probeDataId, string step, Exception exception);
     }
 
     public class AssetServiceDataService : IAssetServiceDataService
@@ -102,6 +104,39 @@ namespace ComputerProbe.BusinessLayer.Services
             data.CreatedOn = DateTime.UtcNow;
 
             _Context.PrinterData.Add(data);
+            _Context.SaveChanges();
+        }
+
+        public void CreateNetworkData(int probeDataId, NetworkData data)
+        {
+            data.ProbeDataId = probeDataId;
+            data.CreatedOn = DateTime.UtcNow;
+
+            _Context.NetworkData.Add(data);
+            _Context.SaveChanges();
+        }
+
+        public void CreateProcessorData(int probeDataId, ProcessorData data)
+        {
+            data.ProbeDataId = probeDataId;
+            data.CreatedOn = DateTime.UtcNow;
+
+            _Context.ProcessorData.Add(data);
+            _Context.SaveChanges();
+        }
+
+        public void CreateError(int probeDataId, string step, Exception exception)
+        {
+            var data = new ErrorData()
+            {
+                ProbeDataId = probeDataId,
+                Step = step,
+                CreatedOn = DateTime.UtcNow,
+                Exception = exception.Message,
+                InnerException = exception.InnerException.Message
+            };
+
+            _Context.ErrorData.Add(data);
             _Context.SaveChanges();
         }
     }

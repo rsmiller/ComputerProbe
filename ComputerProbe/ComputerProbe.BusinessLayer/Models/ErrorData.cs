@@ -4,14 +4,13 @@ using System.Text;
 
 namespace ComputerProbe.BusinessLayer.Models
 {
-    public class NetworkData
+    public class ErrorData
     {
         public int Id { get; set; }
         public int ProbeDataId { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public string Address { get; set; }
-        public string Status { get; set; }
+        public string Step { get; set; }
+        public string Exception { get; set; }
+        public string InnerException { get; set; }
         public DateTime CreatedOn { get; set; }
     }
 }

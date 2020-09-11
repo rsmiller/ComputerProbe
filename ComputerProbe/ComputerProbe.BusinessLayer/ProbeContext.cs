@@ -16,6 +16,8 @@ namespace ComputerProbe.BusinessLayer
         DbSet<NetworkData> NetworkData { get; set; }
         DbSet<PrinterData> PrinterData { get; set; }
         DbSet<IPData> IPData { get; set; }
+        DbSet<ProcessorData> ProcessorData { get; set; }
+        DbSet<ErrorData> ErrorData { get; set; }
         int SaveChanges();
     }
     public class ProbeContext : DbContext, IProbeContext
@@ -49,6 +51,8 @@ namespace ComputerProbe.BusinessLayer
             modelBuilder.ApplyConfiguration(new NetworkDataConfiguration());
             modelBuilder.ApplyConfiguration(new OSDataConfiguration());
             modelBuilder.ApplyConfiguration(new PrinterDataConfiguration());
+            modelBuilder.ApplyConfiguration(new ProcessorDataConfiguration());
+            modelBuilder.ApplyConfiguration(new ErrorDataConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }
@@ -60,5 +64,7 @@ namespace ComputerProbe.BusinessLayer
         public DbSet<NetworkData> NetworkData { get; set; }
         public DbSet<PrinterData> PrinterData { get; set; }
         public DbSet<IPData> IPData { get; set; }
+        public DbSet<ProcessorData> ProcessorData { get; set; }
+        public DbSet<ErrorData> ErrorData { get; set; }
     }
 }

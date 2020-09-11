@@ -71,9 +71,9 @@ namespace ComputerProbe.Probe
                     _AssetDataService.CreateOSData(_MachineData.Id, data);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                _AssetDataService.CreateError(_MachineData.Id, "GetOS", e);
             }
         }
 
@@ -92,16 +92,25 @@ namespace ComputerProbe.Probe
                     Console.WriteLine("NumberOfEnabledCore  -  " + obj["NumberOfEnabledCore"]);
                     Console.WriteLine("NumberOfLogicalProcessors  -  " + obj["NumberOfLogicalProcessors"]);
                     Console.WriteLine("AddressWidth  -  " + obj["AddressWidth"]);
+
+                    var data = new ProcessorData()
+                    {
+                        Name = obj["Name"].ToString(),
+                        DeviceId = obj["DeviceID"].ToString(),
+                        CurrentClockSpeed = obj["CurrentClockSpeed"].ToString(),
+                        NumberOfCores = obj["NumberOfCores"].ToString(),
+                        NumberOfEnabledCore = obj["NumberOfEnabledCore"].ToString(),
+                        NumberOfLogicalProcessors = obj["NumberOfLogicalProcessors"].ToString(),
+                        AddressWidth = obj["AddressWidth"].ToString()
+                    };
+
+                    _AssetDataService.CreateProcessorData(_MachineData.Id, data);
                 }
             }
-            catch(Exception)
+            catch (Exception e)
             {
-
+                _AssetDataService.CreateError(_MachineData.Id, "GetProcessors", e);
             }
-            //var data = new ProcessorData()
-            //{
-
-            //}
         }
 
         private static void GetHardDriveData()
@@ -140,9 +149,9 @@ namespace ComputerProbe.Probe
                     }
                 }
             }
-            catch(Exception)
+            catch (Exception e)
             {
-
+                _AssetDataService.CreateError(_MachineData.Id, "GetHardDriveData", e);
             }
         }
 
@@ -170,9 +179,9 @@ namespace ComputerProbe.Probe
                 }
 
             }
-            catch(Exception)
+            catch (Exception e)
             {
-
+                _AssetDataService.CreateError(_MachineData.Id, "GetGPUs", e);
             }
         }
 
@@ -191,50 +200,65 @@ namespace ComputerProbe.Probe
                     Console.WriteLine("  Physical Address ........................ : {0}", adapter.GetPhysicalAddress());
                     Console.WriteLine("  Operational status ...................... : {0}", adapter.OperationalStatus);
 
+                    var data = new NetworkData()
+                    {
+                        Name = adapter.Description,
+                        Type = adapter.NetworkInterfaceType.ToString(),
+                        Address = adapter.GetPhysicalAddress().ToString(),
+                        Status = adapter.OperationalStatus.ToString()
+                    };
+
+                    _AssetDataService.CreateNetworkData(_MachineData.Id, data);
                 }
             }
-            catch(Exception)
+            catch (Exception e)
             {
-
+                _AssetDataService.CreateError(_MachineData.Id, "GetNICs", e);
             }
-            
         }
 
         private static void GetIPs()
         {
-            // My address
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-
-            // Get Local IP4 address
-            var ip = new WebClient().DownloadString("https://ipv4.icanhazip.com/").Replace("\n", "");
-            var externalServerIPAddress = System.Net.IPAddress.Parse(ip);
-
-            Console.WriteLine("External IP: " + externalServerIPAddress.ToString());
-
-            var thisIPAddress = host.AddressList.Where(m => m.AddressFamily == AddressFamily.InterNetwork).LastOrDefault();
-
-            // Linux
-            if (thisIPAddress == null)
+            try
             {
-                thisIPAddress = NetworkInterface.GetAllNetworkInterfaces().SelectMany(i => i.GetIPProperties().UnicastAddresses).Select(a => a.Address).Where(a => a.AddressFamily == AddressFamily.InterNetwork).LastOrDefault();
-                Console.WriteLine("Internal IP: " + thisIPAddress.ToString());
+                // My address
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+
+                // Get Local IP4 address
+                var ip = new WebClient().DownloadString("https://ipv4.icanhazip.com/").Replace("\n", "");
+                var externalServerIPAddress = System.Net.IPAddress.Parse(ip);
+
+                Console.WriteLine("External IP: " + externalServerIPAddress.ToString());
+
+                var thisIPAddress = host.AddressList.Where(m => m.AddressFamily == AddressFamily.InterNetwork).LastOrDefault();
+
+                // Linux
+                if (thisIPAddress == null)
+                {
+                    thisIPAddress = NetworkInterface.GetAllNetworkInterfaces().SelectMany(i => i.GetIPProperties().UnicastAddresses).Select(a => a.Address).Where(a => a.AddressFamily == AddressFamily.InterNetwork).LastOrDefault();
+                    Console.WriteLine("Internal IP: " + thisIPAddress.ToString());
+                }
+                else
+                {
+                    var ipAddresses = host.AddressList.Where(m => m.AddressFamily == AddressFamily.InterNetwork).ToList();
+                    foreach (var theIP in ipAddresses)
+                        Console.WriteLine("Internal IP: " + theIP.ToString());
+
+                }
+
+                var data = new IPData()
+                {
+                    ExternalAddress = externalServerIPAddress.ToString(),
+                    InternalAddress = thisIPAddress.ToString(),
+                    Host = host.HostName
+                };
+
+                _AssetDataService.CreateIPData(_MachineData.Id, data);
             }
-            else
+            catch (Exception e)
             {
-                var ipAddresses = host.AddressList.Where(m => m.AddressFamily == AddressFamily.InterNetwork).ToList();
-                foreach (var theIP in ipAddresses)
-                    Console.WriteLine("Internal IP: " + theIP.ToString());
-
+                _AssetDataService.CreateError(_MachineData.Id, "GetIPs", e);
             }
-
-            var data = new IPData()
-            {
-                ExternalAddress = externalServerIPAddress.ToString(),
-                InternalAddress = thisIPAddress.ToString(),
-                Host = host.HostName
-            };
-
-            _AssetDataService.CreateIPData(_MachineData.Id, data);
         }
 
         private static void GetPrinters()
@@ -265,9 +289,9 @@ namespace ComputerProbe.Probe
                     _AssetDataService.CreatePrinterData(_MachineData.Id, data);
                 }
             }
-            catch(Exception)
+            catch (Exception e)
             {
-
+                _AssetDataService.CreateError(_MachineData.Id, "GetPrinters", e);
             }
         }
     }
