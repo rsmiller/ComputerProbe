@@ -4,12 +4,13 @@ using System.Text;
 
 namespace ComputerProbe.BusinessLayer.Models
 {
-    public class ProbeData
+    public class SoftwareData
     {
         public int Id { get; set; }
-        public string MachineName { get; set; }
-        public string DomainName { get; set; }
+        public int ProbeDataId { get; set; }
+        public string Name { get; set; }
+        public string Vendor { get; set; }
+        public string Version { get; set; }
         public DateTime CreatedOn { get; set; }
-        public DateTime? UpdatedOn { get; set; }
     }
 }

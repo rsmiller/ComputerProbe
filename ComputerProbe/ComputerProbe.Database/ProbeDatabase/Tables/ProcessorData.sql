@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ProcessorData](
-	[Id] [int] NOT NULL,
+	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[ProbeDataId] [int] NOT NULL,
 	[Name] [nvarchar](500) NULL,
 	[DeviceId] [nvarchar](500) NULL,

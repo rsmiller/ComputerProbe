@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[DriveData](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[ProbeDataId] [int] NOT NULL,
+	[Name] [nvarchar](500) NULL,
 	[DriveData] [nvarchar](500) NULL,
 	[DriveType] [nvarchar](500) NULL,
 	[VolumeLabel] [nvarchar](500) NULL,

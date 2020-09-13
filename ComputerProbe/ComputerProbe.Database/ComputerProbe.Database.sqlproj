@@ -68,5 +68,10 @@
     <Build Include="ProbeDatabase\Tables\OSData.sql" />
     <Build Include="ProbeDatabase\Tables\PrinterData.sql" />
     <Build Include="ProbeDatabase\Tables\ProcessorData.sql" />
+    <Build Include="ProbeDatabase\Tables\SoftwareData.sql" />
+    <Build Include="ProbeDatabase\Tables\ErrorData.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ComputerProbe.Database.publish.xml" />
   </ItemGroup>
 </Project>

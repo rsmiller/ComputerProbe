@@ -27,6 +27,7 @@ namespace ComputerProbe.BusinessLayer.Services
         void CreateOSData(int probeDataId, OSData data);
         void CreateNetworkData(int probeDataId, NetworkData data);
         void CreatePrinterData(int probeDataId, PrinterData data);
+        void CreateSoftwareData(int probeDataId, SoftwareData data);
         void CreateError(int probeDataId, string step, Exception exception);
     }
 
@@ -52,7 +53,7 @@ namespace ComputerProbe.BusinessLayer.Services
                 MachineName = computerName,
                 DomainName = domainName,
                 CreatedOn = now,
-                LastUpdate = now
+                UpdatedOn = now
             };
 
             _Context.ProbeData.Add(data);
@@ -122,6 +123,15 @@ namespace ComputerProbe.BusinessLayer.Services
             data.CreatedOn = DateTime.UtcNow;
 
             _Context.ProcessorData.Add(data);
+            _Context.SaveChanges();
+        }
+
+        public void CreateSoftwareData(int probeDataId, SoftwareData data)
+        {
+            data.ProbeDataId = probeDataId;
+            data.CreatedOn = DateTime.UtcNow;
+
+            _Context.SoftwareData.Add(data);
             _Context.SaveChanges();
         }
 

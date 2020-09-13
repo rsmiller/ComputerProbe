@@ -15,9 +15,6 @@ namespace ComputerProbe.Probe
     class Program
     {
         private static DatabaseConnectionSettings _DBSettings = new DatabaseConnectionSettings();
-        private static string _DatabaseUserPassword = "AtiG30wOkkTlJuXsFUM";
-        // Idealy you want to obtain this from another source.... Not have it in an config nor in code. Small business, small budgets
-
         private static AssetServiceDataService _AssetDataService;
 
         private static ProbeContext _Context;
@@ -30,13 +27,14 @@ namespace ComputerProbe.Probe
 
             config.GetSection("DBConnection").Bind(_DBSettings);
 
-            _DBSettings.ConnectionString += ";password=" + _DatabaseUserPassword;
+            _DBSettings.ConnectionString = _DBSettings.ConnectionString.Replace(".\\", @".\");
 
             _Context = new ProbeContext(_DBSettings.ConnectionString);
             _AssetDataService = new AssetServiceDataService(_Context);
 
             _MachineData = _AssetDataService.GetOrCreateMachine(Environment.MachineName, Environment.UserDomainName);
 
+   
             GetOS();
             GetProcessors();
             GetIPs();
@@ -44,6 +42,7 @@ namespace ComputerProbe.Probe
             GetGPUs();
             GetNICs();
             GetPrinters();
+            GetSoftware();
         }
 
         private static void GetOS()
@@ -99,7 +98,7 @@ namespace ComputerProbe.Probe
                         DeviceId = obj["DeviceID"].ToString(),
                         CurrentClockSpeed = obj["CurrentClockSpeed"].ToString(),
                         NumberOfCores = obj["NumberOfCores"].ToString(),
-                        NumberOfEnabledCore = obj["NumberOfEnabledCore"].ToString(),
+                        NumberOfEnabledCores = obj["NumberOfEnabledCore"].ToString(),
                         NumberOfLogicalProcessors = obj["NumberOfLogicalProcessors"].ToString(),
                         AddressWidth = obj["AddressWidth"].ToString()
                     };
@@ -280,7 +279,7 @@ namespace ComputerProbe.Probe
                     {
                         Name = obj["Name"].ToString(),
                         Network = obj["Network"].ToString(),
-                        Availability = obj["Availability"].ToString(),
+                        Availability = obj["Availability"] != null ? obj["Availability"].ToString() : "",
                         IsDefault = obj["Default"].ToString(),
                         DeviceID = obj["DeviceID"].ToString(),
                         Status = obj["Status"].ToString(),
@@ -292,6 +291,36 @@ namespace ComputerProbe.Probe
             catch (Exception e)
             {
                 _AssetDataService.CreateError(_MachineData.Id, "GetPrinters", e);
+            }
+        }
+
+        private static void GetSoftware()
+        {
+            try
+            {
+                ManagementObjectSearcher myPrinterObject = new ManagementObjectSearcher("SELECT * FROM Win32_Product");
+
+                foreach (ManagementObject obj in myPrinterObject.Get())
+                {
+                    Console.WriteLine("Name  -  " + obj["Name"]);
+
+                    if(obj["Name"] != null)
+                    {
+                        var data = new SoftwareData()
+                        {
+                            Name = obj["Name"].ToString(),
+                            Vendor = obj["Vendor"].ToString(),
+                            Version = obj["Version"].ToString()
+                        };
+
+                        _AssetDataService.CreateSoftwareData(_MachineData.Id, data);
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                _AssetDataService.CreateError(_MachineData.Id, "GetSoftware", e);
             }
         }
     }

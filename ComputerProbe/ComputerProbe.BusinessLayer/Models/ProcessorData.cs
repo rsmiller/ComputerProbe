@@ -13,7 +13,7 @@ namespace ComputerProbe.BusinessLayer.Models
         public string CurrentClockSpeed { get; set; }
         public string NumberOfCores { get; set; }
         public string AddressWidth { get; set; }
-        public string NumberOfEnabledCore { get; set; }
+        public string NumberOfEnabledCores { get; set; }
         public string NumberOfLogicalProcessors { get; set; }
         public DateTime CreatedOn { get; set; }
     }
