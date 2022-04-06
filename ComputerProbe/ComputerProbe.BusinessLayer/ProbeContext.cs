@@ -19,6 +19,7 @@ namespace ComputerProbe.BusinessLayer
         DbSet<ProcessorData> ProcessorData { get; set; }
         DbSet<SoftwareData> SoftwareData { get; set; }
         DbSet<ErrorData> ErrorData { get; set; }
+        DbSet<RAMData> RAMData { get; set; }
         int SaveChanges();
     }
     public class ProbeContext : DbContext, IProbeContext
@@ -55,6 +56,7 @@ namespace ComputerProbe.BusinessLayer
             modelBuilder.ApplyConfiguration(new ProcessorDataConfiguration());
             modelBuilder.ApplyConfiguration(new SoftwareDataConfiguration());
             modelBuilder.ApplyConfiguration(new ErrorDataConfiguration());
+            modelBuilder.ApplyConfiguration(new RAMDataConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }
@@ -69,5 +71,6 @@ namespace ComputerProbe.BusinessLayer
         public DbSet<ProcessorData> ProcessorData { get; set; }
         public DbSet<SoftwareData> SoftwareData { get; set; }
         public DbSet<ErrorData> ErrorData { get; set; }
+        public DbSet<RAMData> RAMData { get; set; }
     }
 }

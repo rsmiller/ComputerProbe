@@ -70,6 +70,7 @@
     <Build Include="ProbeDatabase\Tables\ProcessorData.sql" />
     <Build Include="ProbeDatabase\Tables\SoftwareData.sql" />
     <Build Include="ProbeDatabase\Tables\ErrorData.sql" />
+    <Build Include="ProbeDatabase\Tables\RAMData.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ComputerProbe.Database.publish.xml" />

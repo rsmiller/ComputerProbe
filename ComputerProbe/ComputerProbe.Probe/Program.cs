@@ -36,6 +36,7 @@ namespace ComputerProbe.Probe
 
    
             GetOS();
+            GetRam();
             GetProcessors();
             GetIPs();
             GetHardDriveData();
@@ -43,6 +44,36 @@ namespace ComputerProbe.Probe
             GetNICs();
             GetPrinters();
             GetSoftware();
+            
+        }
+
+        private static void GetRam()
+        {
+            try
+            {
+
+                ManagementObjectSearcher myOperativeSystemObject = new ManagementObjectSearcher("select * from Win32_PhysicalMemory");
+
+                UInt64 total = 0;
+                foreach (ManagementObject ram in myOperativeSystemObject.Get())
+                {
+                    var data = new RAMData()
+                    {
+                        Size = Convert.ToInt64(ram.GetPropertyValue("Capacity")) / 1073741824,
+                        Part = ram.GetPropertyValue("PartNumber").ToString(),
+                        SerialNumber = ram.GetPropertyValue("SerialNumber").ToString(),
+                        MemoryType = MemoryType(ram.GetPropertyValue("MemoryType").ToString() != "" ? int.Parse(ram.GetPropertyValue("MemoryType").ToString()) : 0)
+                    };
+
+                    _AssetDataService.CreateRAMData(_MachineData.Id, data);
+                }
+
+                
+            }
+            catch (Exception e)
+            {
+                _AssetDataService.CreateError(_MachineData.Id, "GetMemory", e);
+            }
         }
 
         private static void GetOS()
@@ -58,13 +89,15 @@ namespace ComputerProbe.Probe
                     Console.WriteLine("CountryCode  -  " + obj["CountryCode"]);
                     Console.WriteLine("EncryptionLevel  -  " + obj["EncryptionLevel"]);
                     Console.WriteLine("Version  -  " + obj["Version"]);
+                    Console.WriteLine("Physical Memory - " + obj["TotalVisibleMemorySize"]);
 
                     var data = new OSData()
                     {
                         Name = obj["Caption"].ToString(),
                         CountryCode = obj["CountryCode"].ToString(),
                         EncryptionLevel = obj["EncryptionLevel"].ToString(),
-                        Version = obj["Version"].ToString()
+                        Version = obj["Version"].ToString(),
+                        PhysicalMemory = obj["TotalVisibleMemorySize"].ToString()  != "" ? long.Parse(obj["TotalVisibleMemorySize"].ToString()): 0
                     };
 
                     _AssetDataService.CreateOSData(_MachineData.Id, data);
@@ -321,6 +354,67 @@ namespace ComputerProbe.Probe
             catch (Exception e)
             {
                 _AssetDataService.CreateError(_MachineData.Id, "GetSoftware", e);
+            }
+        }
+
+        private static string MemoryType(int memType)
+        {
+            string result = string.Empty;
+
+            switch (memType)
+            {
+                case 0:
+                    return "Unknown";
+                case 1:
+                    return "Other";
+                case 2:
+                    return "DRAM";
+                case 3:
+                    return "Synchronous DRAM";
+                case 4:
+                    return "Cache DRAM";
+                case 5:
+                    return "EDO";
+                case 6:
+                    return "EDRAM";
+                case 7:
+                    return "VRAM";
+                case 8:
+                    return "SRAM";
+                case 9:
+                    return "RAM";
+                case 10:
+                    return "ROM";
+                case 11:
+                    return "Flash";
+                case 12:
+                    return "EEPROM";
+                case 13:
+                    return "FEPROM";
+                case 14:
+                    return "EPROM";
+                case 15:
+                    return "CDRAM";
+                case 16:
+                    return "3DRAM";
+                case 17:
+                    return "SDRAM";
+                case 18:
+                    return "SGRAM";
+                case 19:
+                    return "RDRAM";
+                case 20:
+                    return "DDR";
+                case 21:
+                    return "DDR2";
+                case 22:
+                    return "DDR2 FB-DIMM";
+                case 24:
+                    return "DDR3";
+                case 26:
+                    return "DDR4";
+                default:
+                    return "not specified";
             }
         }
     }

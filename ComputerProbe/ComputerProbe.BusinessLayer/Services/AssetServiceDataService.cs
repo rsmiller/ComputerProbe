@@ -65,74 +65,136 @@ namespace ComputerProbe.BusinessLayer.Services
 
         public void CreateDriveData(int probeDataId, DriveData data)
         {
-            data.ProbeDataId = probeDataId;
-            data.CreatedOn = DateTime.UtcNow;
+            var exists = _Context.DriveData.Where(m => m.Name == data.Name && m.ProbeDataId == probeDataId).FirstOrDefault();
 
-            _Context.DriveData.Add(data);
-            _Context.SaveChanges();
+            if (exists == null)
+            {
+                data.ProbeDataId = probeDataId;
+                data.CreatedOn = DateTime.UtcNow;
+
+                _Context.DriveData.Add(data);
+                _Context.SaveChanges();
+            }
         }
 
         public void CreateGPUData(int probeDataId, GPUData data)
         {
-            data.ProbeDataId = probeDataId;
-            data.CreatedOn = DateTime.UtcNow;
+            var exists = _Context.GPUData.Where(m => m.Name == data.Name && m.ProbeDataId == probeDataId).FirstOrDefault();
 
-            _Context.GPUData.Add(data);
-            _Context.SaveChanges();
+            if(exists == null)
+            {
+                data.ProbeDataId = probeDataId;
+                data.CreatedOn = DateTime.UtcNow;
+
+                _Context.GPUData.Add(data);
+                _Context.SaveChanges();
+            }
+        }
+
+        public void CreateRAMData(int probeDataId, RAMData data)
+        {
+            var exists = _Context.RAMData.Where(m => m.Size == data.Size && m.Part == data.Part && m.SerialNumber == data.SerialNumber && m.ProbeDataId == probeDataId).FirstOrDefault();
+
+            if (exists == null)
+            {
+                data.ProbeDataId = probeDataId;
+                data.CreatedOn = DateTime.UtcNow;
+
+                _Context.RAMData.Add(data);
+                _Context.SaveChanges();
+            }
         }
 
         public void CreateOSData(int probeDataId, OSData data)
         {
-            data.ProbeDataId = probeDataId;
-            data.CreatedOn = DateTime.UtcNow;
+            var exists = _Context.OSData.Where(m => m.Name == data.Name && m.ProbeDataId == probeDataId).FirstOrDefault();
 
-            _Context.OSData.Add(data);
-            _Context.SaveChanges();
+            if (exists == null)
+            {
+                data.ProbeDataId = probeDataId;
+                data.CreatedOn = DateTime.UtcNow;
+
+                _Context.OSData.Add(data);
+                _Context.SaveChanges();
+            }
+            else
+            {
+                exists.PhysicalMemory = data.PhysicalMemory;
+                exists.Version = data.Version;
+
+                _Context.OSData.Update(exists);
+                _Context.SaveChanges();
+            }
         }
 
         public void CreateIPData(int probeDataId, IPData data)
         {
-            data.ProbeDataId = probeDataId;
-            data.CreatedOn = DateTime.UtcNow;
+            var exists = _Context.IPData.Where(m => m.InternalAddress == data.InternalAddress && m.ProbeDataId == probeDataId).FirstOrDefault();
 
-            _Context.IPData.Add(data);
-            _Context.SaveChanges();
+            if (exists == null)
+            {
+                data.ProbeDataId = probeDataId;
+                data.CreatedOn = DateTime.UtcNow;
+
+                _Context.IPData.Add(data);
+                _Context.SaveChanges();
+            }
         }
 
         public void CreatePrinterData(int probeDataId, PrinterData data)
         {
-            data.ProbeDataId = probeDataId;
-            data.CreatedOn = DateTime.UtcNow;
+            var exists = _Context.PrinterData.Where(m => m.Name == data.Name && m.ProbeDataId == probeDataId).FirstOrDefault();
 
-            _Context.PrinterData.Add(data);
-            _Context.SaveChanges();
+            if (exists == null)
+            {
+                data.ProbeDataId = probeDataId;
+                data.CreatedOn = DateTime.UtcNow;
+
+                _Context.PrinterData.Add(data);
+                _Context.SaveChanges();
+            }
         }
 
         public void CreateNetworkData(int probeDataId, NetworkData data)
         {
-            data.ProbeDataId = probeDataId;
-            data.CreatedOn = DateTime.UtcNow;
+            var exists = _Context.NetworkData.Where(m => m.Name == data.Name && m.ProbeDataId == probeDataId).FirstOrDefault();
 
-            _Context.NetworkData.Add(data);
-            _Context.SaveChanges();
+            if (exists == null)
+            {
+                data.ProbeDataId = probeDataId;
+                data.CreatedOn = DateTime.UtcNow;
+
+                _Context.NetworkData.Add(data);
+                _Context.SaveChanges();
+            }
         }
 
         public void CreateProcessorData(int probeDataId, ProcessorData data)
         {
-            data.ProbeDataId = probeDataId;
-            data.CreatedOn = DateTime.UtcNow;
+            var exists = _Context.ProcessorData.Where(m => m.Name == data.Name && m.ProbeDataId == probeDataId).FirstOrDefault();
 
-            _Context.ProcessorData.Add(data);
-            _Context.SaveChanges();
+            if (exists == null)
+            {
+                data.ProbeDataId = probeDataId;
+                data.CreatedOn = DateTime.UtcNow;
+
+                _Context.ProcessorData.Add(data);
+                _Context.SaveChanges();
+            }
         }
 
         public void CreateSoftwareData(int probeDataId, SoftwareData data)
         {
-            data.ProbeDataId = probeDataId;
-            data.CreatedOn = DateTime.UtcNow;
+            var exists = _Context.SoftwareData.Where(m => m.Name == data.Name && m.ProbeDataId == probeDataId).FirstOrDefault();
 
-            _Context.SoftwareData.Add(data);
-            _Context.SaveChanges();
+            if (exists == null)
+            {
+                data.ProbeDataId = probeDataId;
+                data.CreatedOn = DateTime.UtcNow;
+
+                _Context.SoftwareData.Add(data);
+                _Context.SaveChanges();
+            }
         }
 
         public void CreateError(int probeDataId, string step, Exception exception)
@@ -141,9 +203,9 @@ namespace ComputerProbe.BusinessLayer.Services
             {
                 ProbeDataId = probeDataId,
                 Step = step,
-                CreatedOn = DateTime.UtcNow,
+                CreatedOn = DateTime.Now,
                 Exception = exception.Message,
-                InnerException = exception.InnerException.Message
+                InnerException = exception.InnerException != null ? exception.InnerException.Message : ""
             };
 
             _Context.ErrorData.Add(data);
