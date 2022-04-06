@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[NetworkData](
-	[Id] [int] NOT NULL,
-	[ProbeDataId] [int] IDENTITY(1,1) NOT NULL,
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ProbeDataId] [int] NOT NULL,
 	[Name] [nvarchar](500) NULL,
 	[Type] [nvarchar](500) NULL,
 	[Address] [nvarchar](500) NULL,
